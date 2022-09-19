@@ -112,6 +112,6 @@ cd ${OUTDIR}/rootfs
 sudo chown -R root:root *
 
 # TODO: Create initramfs.cpio.gz
-find . | cpio -H newc -ov --owner root:root > /tmp/aesd-autograder/initramfs.cpio
+find . | cpio -H newc -ov --owner root:root > ../initramfs.cpio
 cd ..
-gzip /tmp/aesd-autograder/initramfs.cpio
+gzip initramfs.cpio
