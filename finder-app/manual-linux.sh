@@ -5,6 +5,7 @@
 set -e
 set -u
 
+export PATH=/home/joelkellam/Downloads/install-lnx/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin:$PATH
 sudo env "PATH=$PATH"
 
 OUTDIR=/tmp/aeld
@@ -55,7 +56,11 @@ then
 fi
 
 # TODO: Create necessary base directories
-
+mkdir ${OUTDIR}/rootfs
+cd ${OUTDIR}/rootfs
+mkdir bin dev etc home lib lib64 proc sbin sys tmp usr var
+mkdir usr/bin usr/lib usr/sbin
+mkdir -p var/log
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/busybox" ]
 then
@@ -69,7 +74,6 @@ fi
 
 # TODO: Make and install busybox
 make -j4 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CONFIG_PREFIX=${OUTDIR}/rootfs install
-
 cd ${OUTDIR}/rootfs
 
 echo "Library dependencies"
@@ -94,9 +98,9 @@ make clean
 make CROSS_COMPILE=${CROSS_COMPILE}
 
 # TODO: Copy the finder related scripts and executables to the /home directory
-cp ./writer ${OUTDIR}/rootfs/home
-cp ./*.sh ${OUTDIR}/rootfs/home
-cp -r ./conf/ ${OUTDIR}/rootfs/home
+cp ${FINDER_APP_DIR}/writer ${OUTDIR}/rootfs/home
+cp ${FINDER_APP_DIR}/*.sh ${OUTDIR}/rootfs/home
+cp -r ${FINDER_APP_DIR}/conf/ ${OUTDIR}/rootfs/home
 
 # TODO: Chown the root directory
 cd ${OUTDIR}/rootfs
