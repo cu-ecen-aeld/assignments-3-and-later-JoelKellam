@@ -94,7 +94,6 @@ sudo mknod -m 666 dev/null c 1 3
 sudo mknod -m 600 dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-build the writer utility
 cd ${FINDER_APP_DIR}
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}
@@ -113,6 +112,6 @@ cd ${OUTDIR}/rootfs
 sudo chown -R root:root *
 
 # TODO: Create initramfs.cpio.gz
-find . | cpio -H newc -ov --owner root:root > ../initramfs.cpio
+find . | cpio -H newc -ov --owner root:root > /tmp/aesd-autograder/initramfs.cpio
 cd ..
-gzip initramfs.cpio
+gzip /tmp/aesd-autograder/initramfs.cpio
