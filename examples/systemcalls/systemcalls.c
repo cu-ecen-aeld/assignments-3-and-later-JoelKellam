@@ -1,4 +1,10 @@
 #include "systemcalls.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+// #include <string.h>
+#include <fcntl.h>
 
 /**
  * @param cmd the command to execute with system()
@@ -16,7 +22,12 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
-
+    int recv;
+    recv = system(cmd);
+    if (recv == -1) 
+    {
+        return false;
+    }
     return true;
 }
 
@@ -47,7 +58,7 @@ bool do_exec(int count, ...)
     command[count] = NULL;
     // this line is to avoid a compile warning before your implementation is complete
     // and may be removed
-    command[count] = command[count];
+    //command[count] = command[count];
 
 /*
  * TODO:
@@ -58,9 +69,27 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    pid_t pid;
+    int status = 0;
 
+    pid = fork();
+    if (pid == -1)
+    {
+        return false;
+    } 
+    else if (pid == 0)
+    {
+        status = execv(command[0], command);
+        exit(1);
+    }
+
+    wait(&status);
+    if (status != 0)
+    {
+    	return false;
+    }
+    
     va_end(args);
-
     return true;
 }
 
@@ -92,8 +121,32 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
+    pid_t pid;
+    int status = 0;
+    int file = 0;
 
+    pid = fork();
+    if (pid == -1)
+    {
+        return false;
+    } 
+    else if (pid == 0)
+    {
+        file = open(outputfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+        if(dup2(file, 1) == -1)
+        {
+            return false;
+        }
+        status = execv(command[0], command);
+        exit(1);
+    }
+
+    wait(&status);
+    if (status != 0)
+    {
+    	return false;
+    }
+    
     va_end(args);
-
     return true;
 }
